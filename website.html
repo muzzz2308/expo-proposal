@@ -141,11 +141,11 @@
   .story h2{ font-size:clamp(32px,4vw,50px); line-height:1.12; }
   .story h2 em{ font-style:italic; color:var(--gold-soft); font-weight:400; }
   .story p{ color:var(--dim); line-height:1.85; margin-top:22px; max-width:44ch; font-size:15px; }
-  .story-art{ position:relative; height:440px; }
-  .parallax-panel{ position:absolute; border-radius:6px; border:1px solid var(--line); overflow:hidden; display:flex; align-items:center; justify-content:center; will-change:transform; }
-  .pp1{ width:66%; height:78%; top:0; right:0; background:linear-gradient(155deg, var(--maroon-2), var(--maroon-deep)); }
-  .pp2{ width:48%; height:44%; bottom:0; left:0; background:linear-gradient(155deg, #2a1712, #150a0c); }
-  .parallax-panel svg{ width:44%; opacity:.85; }
+  .story-art{ position:relative; height:480px; }
+  .parallax-panel{ position:absolute; border-radius:6px; border:1px solid var(--line); overflow:hidden; will-change:transform; box-shadow:0 28px 50px -24px rgba(0,0,0,.7); }
+  .parallax-panel img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .pp1{ width:68%; height:82%; top:0; right:0; }
+  .pp2{ width:50%; height:48%; bottom:0; left:0; }
 
   /* menu - 3D flip cards */
   .menu-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; margin-bottom:56px; }
@@ -259,7 +259,7 @@
   @media (max-width:900px){
     .nav-links{ display:none; }
     .story, .visit-grid, .loyalty-wrap{ grid-template-columns:1fr; }
-    .story-art{ height:320px; order:-1; }
+    .story-art{ height:360px; order:-1; }
     .flip-grid{ grid-template-columns:1fr 1fr; }
     .foot-top{ grid-template-columns:1fr; gap:40px; }
     section{ padding:100px 0; }
@@ -419,10 +419,10 @@
         </div>
         <div class="story-art reveal-r">
           <div class="parallax-panel pp1" data-speed="0.06">
-            <svg viewBox="0 0 100 100" fill="none" stroke="var(--gold-soft)" stroke-width="1.4"><path d="M25 40 h44 v22 a22 22 0 0 1 -22 22 h0 a22 22 0 0 1 -22 -22 z"/><path d="M69 46 h8 a8 8 0 0 1 0 16 h-8"/><path d="M35 40 c0 -8 4 -8 4 -14" stroke-linecap="round"/><path d="M47 40 c0 -8 4 -8 4 -14" stroke-linecap="round"/><path d="M59 40 c0 -8 4 -8 4 -14" stroke-linecap="round"/></svg>
+            <img src="/images/story-cup.jpg" alt="Espro cup: I've been looking for you everywhere">
           </div>
           <div class="parallax-panel pp2" data-speed="0.12">
-            <svg viewBox="0 0 100 100" fill="none" stroke="var(--cream)" stroke-width="1.4"><ellipse cx="50" cy="60" rx="30" ry="10"/><path d="M20 60 c0 10 40 20 60 0"/></svg>
+            <img src="/images/story-letter.jpg" alt="Espro letter and coffee cup on a burgundy leather chair">
           </div>
         </div>
       </div>
