@@ -152,15 +152,42 @@
   .menu-head h2{ font-size:clamp(32px,4vw,48px); }
   .menu-head p{ color:var(--dim); max-width:34ch; font-size:14.5px; line-height:1.7; }
   .flip-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
-  .flip-outer{ perspective:1400px; height:300px; }
-  .flip-inner{ position:relative; width:100%; height:100%; transform-style:preserve-3d; transition:transform .8s var(--ease); }
+  .flip-cell{ height:300px; }
+  .flip-cell.reveal, .flip-cell.reveal.in{ transform:none; }
+  .flip-outer{ perspective:1400px; height:100%; cursor:pointer; transform-style:preserve-3d; }
+  .flip-inner{ position:relative; width:100%; height:100%; transform-style:preserve-3d; -webkit-transform-style:preserve-3d; transition:transform .8s var(--ease); }
   .flip-outer:hover .flip-inner, .flip-outer.flipped .flip-inner{ transform:rotateY(180deg); }
-  .flip-face{ position:absolute; inset:0; backface-visibility:hidden; border-radius:6px; border:1px solid var(--line); overflow:hidden; }
-  .flip-front{ background:var(--maroon-deep); position:relative; }
-  .flip-photo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .8s var(--ease); }
-  .flip-outer:hover .flip-photo{ transform:scale(1.1); }
-  .flip-scrim{ position:absolute; inset:0; background:linear-gradient(180deg, rgba(14,7,8,0) 38%, rgba(14,7,8,.92) 100%); }
-  .flip-label{ position:absolute; left:20px; right:20px; bottom:16px; font-family:'Fraunces',serif; font-style:italic; font-size:15px; letter-spacing:.01em; color:var(--gold-soft); }
+  .flip-face{
+    position:absolute; inset:0; border-radius:6px; border:1px solid var(--line); overflow:hidden;
+    -webkit-backface-visibility:hidden; backface-visibility:hidden;
+  }
+  .flip-front{
+    display:flex; flex-direction:column; justify-content:flex-end; padding:22px 20px 18px;
+    transform:rotateY(0deg);
+  }
+  .front-glow{ position:absolute; inset:0; pointer-events:none; }
+  .front-art{
+    position:absolute; inset:18px 18px 78px; display:flex; align-items:center; justify-content:center;
+    transition:transform .8s var(--ease);
+  }
+  .front-art svg{ width:min(58%, 140px); height:auto; filter:drop-shadow(0 18px 22px rgba(0,0,0,.35)); }
+  .flip-outer:hover .front-art{ transform:scale(1.06); }
+  .front-meta{ position:relative; z-index:2; }
+  .front-kicker{ display:block; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold-soft); }
+  .front-meta h4{ font-family:'Fraunces',serif; font-style:italic; font-weight:500; font-size:20px; margin:5px 0 2px; color:var(--cream); }
+  .front-price{ font-family:'Fraunces',serif; font-style:italic; color:var(--gold); font-size:13.5px; }
+  .front-espresso{ background:radial-gradient(120% 90% at 70% 8%, #8a1c2d 0%, #1a080c 62%); }
+  .front-espresso .front-glow{ background:radial-gradient(circle at 30% 70%, rgba(205,166,83,.22), transparent 46%); }
+  .front-latte{ background:radial-gradient(120% 90% at 20% 0%, #cda653 0%, #5c1220 38%, #14090b 72%); }
+  .front-latte .front-glow{ background:radial-gradient(circle at 80% 80%, rgba(243,237,227,.16), transparent 50%); }
+  .front-coldbrew{ background:radial-gradient(120% 90% at 80% 10%, #3c6d7a 0%, #1b0a0d 58%); }
+  .front-coldbrew .front-glow{ background:radial-gradient(circle at 20% 80%, rgba(205,166,83,.18), transparent 48%); }
+  .front-toast{ background:radial-gradient(120% 90% at 10% 0%, #6d8a3a 0%, #3c0c15 42%, #14090b 74%); }
+  .front-toast .front-glow{ background:radial-gradient(circle at 85% 70%, rgba(205,166,83,.2), transparent 50%); }
+  .front-shak{ background:radial-gradient(120% 90% at 90% 0%, #c45a32 0%, #6d1524 40%, #14090b 72%); }
+  .front-shak .front-glow{ background:radial-gradient(circle at 18% 78%, rgba(231,205,147,.18), transparent 48%); }
+  .front-cake{ background:radial-gradient(120% 90% at 50% 0%, #e7cd93 0%, #6d1524 36%, #14090b 72%); }
+  .front-cake .front-glow{ background:radial-gradient(circle at 70% 80%, rgba(205,166,83,.22), transparent 50%); }
   .flip-back{ background:var(--bg-2); transform:rotateY(180deg); padding:28px; display:flex; flex-direction:column; justify-content:center; }
   .flip-back h4{ font-size:19px; font-weight:500; }
   .flip-back .price{ color:var(--gold-soft); font-family:'Fraunces',serif; font-style:italic; font-size:15px; margin-top:6px; }
@@ -247,9 +274,6 @@
   .nav-toggle{
     display:none; background:none; border:1px solid var(--line); color:var(--cream);
     width:40px; height:40px; border-radius:2px; cursor:pointer; font-size:18px;
-  }
-  .flip-photo.placeholder{
-    width:100%; height:100%; object-fit:cover;
   }
   .modal-scrim{
     position:fixed; inset:0; z-index:1200; background:rgba(8,4,5,.72); display:none;
@@ -415,40 +439,88 @@
       </div>
 
       <div class="flip-grid">
-        <div class="flip-outer reveal magnetic-flip">
-          <div class="flip-inner">
-            <div class="flip-face flip-front"><img class="flip-photo" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22500%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%233c0c15%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23cda653%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22500%22%20height%3D%22400%22%20fill%3D%22url(%23g)%22%2F%3E%3Ccircle%20cx%3D%22360%22%20cy%3D%2280%22%20r%3D%2290%22%20fill%3D%22rgba(255%2C255%2C255%2C0.08)%22%2F%3E%3Ctext%20x%3D%2240%22%20y%3D%22340%22%20fill%3D%22%23f3ede3%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2228%22%20font-style%3D%22italic%22%3EEspresso%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Espro Espresso" loading="lazy"><div class="flip-scrim"></div><div class="flip-label">Espro Espresso</div></div>
-            <div class="flip-face flip-back"><h4>Espro Espresso</h4><div class="price">Rs. 460</div><p>House blend, pulled short and dark, with stone fruit up front and cocoa on the finish.</p><div class="tags"><span class="tag">Single Origin</span><span class="tag">Bold</span></div></div>
+        <div class="flip-cell reveal">
+          <div class="flip-outer magnetic-flip">
+            <div class="flip-inner">
+              <div class="flip-face flip-front front-espresso">
+                <div class="front-glow"></div>
+                <div class="front-art" aria-hidden="true">
+                  <svg viewBox="0 0 120 120" fill="none"><ellipse cx="60" cy="104" rx="28" ry="6" fill="rgba(0,0,0,.35)"/><path d="M34 58c2 28 52 28 54 0" stroke="#cda653" stroke-width="3"/><path d="M38 58h46c1 22-10 36-23 36S37 80 38 58Z" fill="#6d1524" stroke="#e7cd93" stroke-width="1.5"/><ellipse cx="61" cy="58" rx="22" ry="7" fill="#3c0c15"/><ellipse cx="61" cy="56" rx="16" ry="4" fill="#cda653" opacity=".7"/><path d="M84 62c12 2 16 16 4 22" stroke="#e7cd93" stroke-width="2.2"/><path d="M52 28c2 10 0 16-4 22" stroke="#f3ede3" stroke-width="1.6" opacity=".45"/><path d="M62 24c1 12 2 18-2 26" stroke="#f3ede3" stroke-width="1.6" opacity=".35"/><path d="M71 30c-1 9 1 16-3 22" stroke="#f3ede3" stroke-width="1.4" opacity=".28"/></svg>
+                </div>
+                <div class="front-meta"><span class="front-kicker">Coffee</span><h4>Espro Espresso</h4><span class="front-price">Rs. 460</span></div>
+              </div>
+              <div class="flip-face flip-back"><h4>Espro Espresso</h4><div class="price">Rs. 460</div><p>House blend, pulled short and dark, with stone fruit up front and cocoa on the finish.</p><div class="tags"><span class="tag">Single Origin</span><span class="tag">Bold</span></div></div>
+            </div>
           </div>
         </div>
-        <div class="flip-outer reveal magnetic-flip">
-          <div class="flip-inner">
-            <div class="flip-face flip-front"><img class="flip-photo" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22500%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%236d1524%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e7cd93%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22500%22%20height%3D%22400%22%20fill%3D%22url(%23g)%22%2F%3E%3Ccircle%20cx%3D%22360%22%20cy%3D%2280%22%20r%3D%2290%22%20fill%3D%22rgba(255%2C255%2C255%2C0.08)%22%2F%3E%3Ctext%20x%3D%2240%22%20y%3D%22340%22%20fill%3D%22%23f3ede3%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2228%22%20font-style%3D%22italic%22%3ELatte%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Spanish Latte" loading="lazy"><div class="flip-scrim"></div><div class="flip-label">Spanish Latte</div></div>
-            <div class="flip-face flip-back"><h4>Spanish Latte</h4><div class="price">Rs. 650</div><p>Creamy espresso with sweetened condensed milk, smooth and rich, no bitterness to fight through.</p><div class="tags"><span class="tag">Popular</span><span class="tag">Sweet</span></div></div>
+        <div class="flip-cell reveal">
+          <div class="flip-outer magnetic-flip">
+            <div class="flip-inner">
+              <div class="flip-face flip-front front-latte">
+                <div class="front-glow"></div>
+                <div class="front-art" aria-hidden="true">
+                  <svg viewBox="0 0 120 120" fill="none"><ellipse cx="56" cy="106" rx="32" ry="6" fill="rgba(0,0,0,.3)"/><rect x="32" y="42" width="50" height="52" rx="8" fill="#f3ede3" stroke="#cda653" stroke-width="1.6"/><path d="M82 52c16 2 18 28 0 32" stroke="#cda653" stroke-width="2.4"/><ellipse cx="57" cy="48" rx="21" ry="8" fill="#e7cd93"/><path d="M46 48c6 8 16 8 22 0" stroke="#6d1524" stroke-width="2" fill="none"/><circle cx="57" cy="46" r="4" fill="#8a1c2d"/><rect x="28" y="38" width="58" height="8" rx="3" fill="#cda653"/></svg>
+                </div>
+                <div class="front-meta"><span class="front-kicker">Coffee</span><h4>Spanish Latte</h4><span class="front-price">Rs. 650</span></div>
+              </div>
+              <div class="flip-face flip-back"><h4>Spanish Latte</h4><div class="price">Rs. 650</div><p>Creamy espresso with sweetened condensed milk, smooth and rich, no bitterness to fight through.</p><div class="tags"><span class="tag">Popular</span><span class="tag">Sweet</span></div></div>
+            </div>
           </div>
         </div>
-        <div class="flip-outer reveal magnetic-flip">
-          <div class="flip-inner">
-            <div class="flip-face flip-front"><img class="flip-photo" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22500%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%231b0a0d%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23cda653%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22500%22%20height%3D%22400%22%20fill%3D%22url(%23g)%22%2F%3E%3Ccircle%20cx%3D%22360%22%20cy%3D%2280%22%20r%3D%2290%22%20fill%3D%22rgba(255%2C255%2C255%2C0.08)%22%2F%3E%3Ctext%20x%3D%2240%22%20y%3D%22340%22%20fill%3D%22%23f3ede3%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2228%22%20font-style%3D%22italic%22%3ECold%20Brew%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Cold Brew" loading="lazy"><div class="flip-scrim"></div><div class="flip-label">Cold Brew</div></div>
-            <div class="flip-face flip-back"><h4>Cold Brew</h4><div class="price">Rs. 600</div><p>Steeped 18 hours, served over ice, bright and low-acid, dangerously easy to order twice.</p><div class="tags"><span class="tag">Iced</span><span class="tag">Low Acid</span></div></div>
+        <div class="flip-cell reveal">
+          <div class="flip-outer magnetic-flip">
+            <div class="flip-inner">
+              <div class="flip-face flip-front front-coldbrew">
+                <div class="front-glow"></div>
+                <div class="front-art" aria-hidden="true">
+                  <svg viewBox="0 0 120 120" fill="none"><ellipse cx="60" cy="108" rx="26" ry="5" fill="rgba(0,0,0,.32)"/><path d="M40 32h40l-6 66H46L40 32Z" fill="#3c0c15" stroke="#e7cd93" stroke-width="1.6"/><path d="M44 40h32l-2 16H46L44 40Z" fill="#6d1524" opacity=".7"/><rect x="50" y="50" width="10" height="10" rx="2" fill="#e7cd93" opacity=".55" transform="rotate(12 55 55)"/><rect x="62" y="58" width="11" height="11" rx="2" fill="#f3ede3" opacity=".35" transform="rotate(-8 67 63)"/><rect x="52" y="70" width="9" height="9" rx="2" fill="#cda653" opacity=".4" transform="rotate(18 56 74)"/><path d="M48 22c8 6 8 12 4 18" stroke="#f3ede3" stroke-width="1.5" opacity=".35"/><path d="M70 20c-6 8-4 14 2 20" stroke="#f3ede3" stroke-width="1.5" opacity=".28"/></svg>
+                </div>
+                <div class="front-meta"><span class="front-kicker">Iced</span><h4>Cold Brew</h4><span class="front-price">Rs. 600</span></div>
+              </div>
+              <div class="flip-face flip-back"><h4>Cold Brew</h4><div class="price">Rs. 600</div><p>Steeped 18 hours, served over ice, bright and low-acid, dangerously easy to order twice.</p><div class="tags"><span class="tag">Iced</span><span class="tag">Low Acid</span></div></div>
+            </div>
           </div>
         </div>
-        <div class="flip-outer reveal magnetic-flip">
-          <div class="flip-inner">
-            <div class="flip-face flip-front"><img class="flip-photo" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22500%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%233c0c15%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%238a1c2d%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22500%22%20height%3D%22400%22%20fill%3D%22url(%23g)%22%2F%3E%3Ccircle%20cx%3D%22360%22%20cy%3D%2280%22%20r%3D%2290%22%20fill%3D%22rgba(255%2C255%2C255%2C0.08)%22%2F%3E%3Ctext%20x%3D%2240%22%20y%3D%22340%22%20fill%3D%22%23f3ede3%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2228%22%20font-style%3D%22italic%22%3EToast%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Avocado Toast" loading="lazy"><div class="flip-scrim"></div><div class="flip-label">Avocado Toast</div></div>
-            <div class="flip-face flip-back"><h4>Avocado Toast</h4><div class="price">Rs. 890</div><p>Sourdough, smashed avocado, chili flakes and lime, the one everyone photographs first.</p><div class="tags"><span class="tag">Brunch</span><span class="tag">Vegetarian</span></div></div>
+        <div class="flip-cell reveal">
+          <div class="flip-outer magnetic-flip">
+            <div class="flip-inner">
+              <div class="flip-face flip-front front-toast">
+                <div class="front-glow"></div>
+                <div class="front-art" aria-hidden="true">
+                  <svg viewBox="0 0 120 120" fill="none"><ellipse cx="62" cy="108" rx="30" ry="5" fill="rgba(0,0,0,.3)"/><path d="M28 46c0-14 16-24 34-24 20 0 34 12 34 26v38c0 8-10 14-34 14s-34-6-34-14V46Z" fill="#cda653"/><path d="M34 48c0-10 14-18 28-18 16 0 28 9 28 20v32c0 6-9 10-28 10s-28-4-28-10V48Z" fill="#e7cd93"/><ellipse cx="62" cy="62" rx="22" ry="16" fill="#6d8a3a"/><ellipse cx="62" cy="62" rx="14" ry="10" fill="#8aa84a"/><circle cx="52" cy="58" r="2" fill="#c45a32"/><circle cx="70" cy="66" r="1.6" fill="#c45a32"/><circle cx="64" cy="54" r="1.4" fill="#8a1c2d"/></svg>
+                </div>
+                <div class="front-meta"><span class="front-kicker">Brunch</span><h4>Avocado Toast</h4><span class="front-price">Rs. 890</span></div>
+              </div>
+              <div class="flip-face flip-back"><h4>Avocado Toast</h4><div class="price">Rs. 890</div><p>Sourdough, smashed avocado, chili flakes and lime, the one everyone photographs first.</p><div class="tags"><span class="tag">Brunch</span><span class="tag">Vegetarian</span></div></div>
+            </div>
           </div>
         </div>
-        <div class="flip-outer reveal magnetic-flip">
-          <div class="flip-inner">
-            <div class="flip-face flip-front"><img class="flip-photo" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22500%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%236d1524%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23cda653%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22500%22%20height%3D%22400%22%20fill%3D%22url(%23g)%22%2F%3E%3Ccircle%20cx%3D%22360%22%20cy%3D%2280%22%20r%3D%2290%22%20fill%3D%22rgba(255%2C255%2C255%2C0.08)%22%2F%3E%3Ctext%20x%3D%2240%22%20y%3D%22340%22%20fill%3D%22%23f3ede3%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2228%22%20font-style%3D%22italic%22%3EShakshuka%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Shakshuka" loading="lazy"><div class="flip-scrim"></div><div class="flip-label">Shakshuka</div></div>
-            <div class="flip-face flip-back"><h4>Shakshuka</h4><div class="price">Rs. 950</div><p>Two eggs poached in a slow tomato-pepper sauce, feta, warm bread on the side.</p><div class="tags"><span class="tag">Brunch</span></div></div>
+        <div class="flip-cell reveal">
+          <div class="flip-outer magnetic-flip">
+            <div class="flip-inner">
+              <div class="flip-face flip-front front-shak">
+                <div class="front-glow"></div>
+                <div class="front-art" aria-hidden="true">
+                  <svg viewBox="0 0 120 120" fill="none"><ellipse cx="58" cy="108" rx="32" ry="5" fill="rgba(0,0,0,.3)"/><path d="M22 70c0 24 16 36 36 36s36-12 36-36H22Z" fill="#8a1c2d"/><ellipse cx="58" cy="70" rx="36" ry="12" fill="#c45a32"/><circle cx="46" cy="68" r="11" fill="#f3ede3"/><circle cx="70" cy="70" r="11" fill="#f3ede3"/><circle cx="46" cy="68" r="5" fill="#cda653"/><circle cx="70" cy="70" r="5" fill="#cda653"/><path d="M94 62c14-2 18 12 8 20" stroke="#cda653" stroke-width="3"/><rect x="50" y="28" width="16" height="18" rx="3" fill="#3c0c15"/></svg>
+                </div>
+                <div class="front-meta"><span class="front-kicker">Brunch</span><h4>Shakshuka</h4><span class="front-price">Rs. 950</span></div>
+              </div>
+              <div class="flip-face flip-back"><h4>Shakshuka</h4><div class="price">Rs. 950</div><p>Two eggs poached in a slow tomato-pepper sauce, feta, warm bread on the side.</p><div class="tags"><span class="tag">Brunch</span></div></div>
+            </div>
           </div>
         </div>
-        <div class="flip-outer reveal magnetic-flip">
-          <div class="flip-inner">
-            <div class="flip-face flip-front"><img class="flip-photo" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22500%22%20height%3D%22400%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23241017%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e7cd93%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22500%22%20height%3D%22400%22%20fill%3D%22url(%23g)%22%2F%3E%3Ccircle%20cx%3D%22360%22%20cy%3D%2280%22%20r%3D%2290%22%20fill%3D%22rgba(255%2C255%2C255%2C0.08)%22%2F%3E%3Ctext%20x%3D%2240%22%20y%3D%22340%22%20fill%3D%22%23f3ede3%22%20font-family%3D%22Georgia%2Cserif%22%20font-size%3D%2228%22%20font-style%3D%22italic%22%3EBasbousa%3C%2Ftext%3E%3C%2Fsvg%3E" alt="Pistachio Basbousa" loading="lazy"><div class="flip-scrim"></div><div class="flip-label">Basbousa</div></div>
-            <div class="flip-face flip-back"><h4>Pistachio Basbousa</h4><div class="price">Rs. 480</div><p>Semolina cake soaked in orange blossom syrup, crushed pistachio, a little too much butter.</p><div class="tags"><span class="tag">Dessert</span></div></div>
+        <div class="flip-cell reveal">
+          <div class="flip-outer magnetic-flip">
+            <div class="flip-inner">
+              <div class="flip-face flip-front front-cake">
+                <div class="front-glow"></div>
+                <div class="front-art" aria-hidden="true">
+                  <svg viewBox="0 0 120 120" fill="none"><ellipse cx="60" cy="108" rx="30" ry="5" fill="rgba(0,0,0,.3)"/><path d="M28 78 60 28l32 50v18H28V78Z" fill="#e7cd93"/><path d="M28 78 60 50l32 28v18H28V78Z" fill="#cda653"/><path d="M28 96h64" stroke="#6d1524" stroke-width="2"/><circle cx="60" cy="62" r="5" fill="#6d8a3a"/><path d="M48 70 60 52l12 18" stroke="#8a1c2d" stroke-width="1.4" opacity=".4"/><path d="M54 40c8-12 18-8 14 4" stroke="#6d8a3a" stroke-width="2"/></svg>
+                </div>
+                <div class="front-meta"><span class="front-kicker">Dessert</span><h4>Basbousa</h4><span class="front-price">Rs. 480</span></div>
+              </div>
+              <div class="flip-face flip-back"><h4>Pistachio Basbousa</h4><div class="price">Rs. 480</div><p>Semolina cake soaked in orange blossom syrup, crushed pistachio, a little too much butter.</p><div class="tags"><span class="tag">Dessert</span></div></div>
+            </div>
           </div>
         </div>
       </div>
